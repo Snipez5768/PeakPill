@@ -716,6 +716,7 @@ public partial class SettingsWindow : Window
     }
 
     private void IslandCenter_Click(object sender, RoutedEventArgs e) => App.Island.ResetPosition();
+    private void WeatherTest_Click(object sender, RoutedEventArgs e) => App.Island.WeatherPreview(); // 48: see it without waiting for rain
 
     private void Fullscreen_Checked(object sender, RoutedEventArgs e)
     {

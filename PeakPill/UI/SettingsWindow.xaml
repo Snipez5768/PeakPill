@@ -851,10 +851,12 @@
                             <Border Style="{StaticResource Row}">
                                 <DockPanel>
                                     <ToggleButton x:Name="OptWeatherFx" DockPanel.Dock="Right" Style="{StaticResource Switch}" Click="Opt_Click" VerticalAlignment="Center" />
+                                    <Button DockPanel.Dock="Right" Style="{StaticResource MacButton}" Content="Testen" Padding="10,3" Margin="0,0,10,0" VerticalAlignment="Center"
+                                            Click="WeatherTest_Click" ToolTip="Lässt in der Insel kurz Regen und danach Schnee fallen" />
                                     <ui:HintPic Kind="sun" />
                                     <StackPanel Margin="0,0,12,0" VerticalAlignment="Center">
                                         <TextBlock Text="Regen und Schnee in der Insel" />
-                                        <TextBlock Style="{StaticResource Desc}" Text="Fängt es an zu regnen oder zu schneien, fällt kurz etwas durch die Insel – und ab und zu, solange die Uhr zu sehen ist." />
+                                        <TextBlock Style="{StaticResource Desc}" Text="Fängt es an zu regnen oder zu schneien, fallen Tropfen oder Flocken durch die Insel – und danach ab und zu wieder, solange es nicht aufhört." />
                                     </StackPanel>
                                 </DockPanel>
                             </Border>

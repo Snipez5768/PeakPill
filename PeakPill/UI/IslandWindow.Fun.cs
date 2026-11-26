@@ -54,26 +54,32 @@ public partial class IslandWindow
     //  48 · rain and snow
     // =====================================================================
 
-    /// <summary>48a: dry → rain or snow (now or within two hours): a short shower through the island and what comes.</summary>
+    /// <summary>
+    /// 48a: dry → rain or snow: a bigger shower falls through the island. Only the effect, no words (user wish
+    /// 2026-11-26: "nicht dass dort steht es regnet, sondern einfach nur den Effekt").
+    /// </summary>
     private void WeatherMoment()
     {
         if (!S.WeatherFx) return;
-        int now = WeatherService.Precip(H.Weather.Code);
-        var soon = H.Weather.HourCodes.Where(h => h.At <= DateTime.Now.AddHours(2)).Select(h => (h.At, P: WeatherService.Precip(h.Code))).FirstOrDefault(h => h.P > 0);
-        int wet = now > 0 ? now : soon.P;
+        int wet = WeatherService.Precip(H.Weather.Code);
         // already raining when PeakPill starts counts too; the island busy (open, a card) → it waits for the next quiet moment
         if (_wasWet != 1 && wet > 0 && _state != State.Collapsed) { _weatherPending = true; return; }
         _weatherPending = false;
         if (_wasWet != 1 && wet > 0)
         {
-            bool snow = wet == 2;
-            string text = now > 0 ? (snow ? L.T("Es schneit") : L.T("Es regnet"))
-                        : snow ? L.T($"Schnee ab {soon.At:HH} Uhr") : L.T($"Regen ab {soon.At:HH} Uhr");
-            _hintHoldMs = 3800;
-            ShowHint(snow ? "snow" : "drop", text, snow ? Brushes.White : (Brush)FindResource("Teal"), key: "weather");
-            After(150, () => Shower(wet, 3800, 24));
+            _lastShower = DateTime.Now;
+            Shower(wet, 3800, 24);
         }
         _wasWet = wet > 0 ? 1 : 0;
+    }
+
+    /// <summary>Settings "Testen": rain, then snow – whatever the weather and the switch say.</summary>
+    public void WeatherPreview()
+    {
+        bool open = _state == State.Expanded;
+        if (open) Collapse();
+        After(open ? 350 : 0, () => Shower(1, 3800, 24));
+        After(open ? 5150 : 4800, () => Shower(2, 4200, 18));
     }
 
     /// <summary>Drops (1) or flakes (2) fall through the island for a moment.</summary>

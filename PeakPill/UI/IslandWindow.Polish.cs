@@ -854,6 +854,24 @@ public partial class IslandWindow
                     Save("output");
                     break;
                 }
+                case "weathertest":
+                {
+                    // the settings "Testen" button (2026-11-26): rain, then snow – only the effect, no words (demo song)
+                    fh = 110;
+                    H.Agents.StopListening();
+                    _demoOnly = true;
+                    if (_tucked) Untuck();
+                    H.Media.Fake("Nachtlicht", "Lena Ost", Pic(Color.FromRgb(0xFF, 0x7A, 0x3D), Color.FromRgb(0xE0, 0x3A, 0x5A)), false);
+                    UpdatePill(true);
+                    await Task.Delay(1200);
+                    WeatherPreview();
+                    await Film(14, 110);
+                    Save("1_regen");
+                    await Task.Delay(3300);
+                    await Film(14, 140);
+                    Save("2_schnee");
+                    break;
+                }
                 case "rain":
                 {
                     // 48 through the real triggers (2026-11-26): dry → rain while music plays, then the drops every 45 s (demo song)
@@ -867,7 +885,7 @@ public partial class IslandWindow
                     await Task.Delay(1200);
                     H.Weather.Fake(61, new() { (DateTime.Now, 61), (DateTime.Now.AddHours(1), 61) });
                     await Film(16, 80);
-                    Save("1_es_regnet");
+                    Save("1_regen_beginnt");
                     await Task.Delay(5000);
                     _lastShower = DateTime.MinValue;
                     FunTick();
