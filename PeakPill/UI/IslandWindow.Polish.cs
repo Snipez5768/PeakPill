@@ -854,6 +854,64 @@ public partial class IslandWindow
                     Save("output");
                     break;
                 }
+                case "shazam":
+                {
+                    // 22 which song is this: the hotkey in the closed island → the card; the view in the control center (demo songs only)
+                    fh = 120;
+                    H.Agents.StopListening();
+                    _demoOnly = true;
+                    H.Media.FakeNone();
+                    S.SongHistory.Clear();
+                    S.SongHistory.Add(new SongSeen { Title = "Morgenrot", Artist = "Lena Ost", At = DateTime.Now.AddHours(-2) });
+                    S.SongHistory.Add(new SongSeen { Title = "Kreise", Artist = "Die Fernen", At = DateTime.Now.AddDays(-1) });
+                    _songFakeCover = Pic(Color.FromRgb(0x30, 0x9C, 0xFF), Color.FromRgb(0x8E, 0x3D, 0xF0));
+                    _songFake = async ct => { await Task.Delay(3200, ct); return new SongMatch("Nachtlicht", "Lena Ost", null, null); };
+                    UpdatePill(true);
+                    await Task.Delay(900);
+                    RecognizeSong();
+                    await Film(14, 110);
+                    Save("1_hoert_zu");
+                    await Task.Delay(1300);
+                    await Film(14, 90);
+                    Save("2_karte");
+                    DismissPeek();
+                    await Task.Delay(900);
+                    Expand("Controls", true);
+                    await Task.Delay(500);
+                    Frame();
+                    fh = 210;
+                    ShowSongView(true);
+                    await Film(14, 110);
+                    Save("3_ansicht_hoert_zu");
+                    await Task.Delay(1300);
+                    await Film(14, 70);
+                    Save("4_ansicht_gefunden");
+                    _songFake = async ct => { await Task.Delay(1500, ct); return null; };
+                    RecognizeSong();
+                    await Task.Delay(1400);
+                    await Film(10, 60);
+                    Save("5_nicht_erkannt");
+                    ShowSongView(false);
+                    _songFake = null;
+                    Collapse();
+                    break;
+                }
+                case "shazamlive":
+                {
+                    // the real thing: what the PC plays right now, asked at Shazam – the answer stays in the local test folder
+                    H.Agents.StopListening();
+                    _demoOnly = true;
+                    string answer;
+                    try
+                    {
+                        var (m, why) = await ListenAndAsk(CancellationToken.None);
+                        answer = $"playing={H.Media.IsPlaying} app={H.Media.AppName} " + (m == null ? "none: " + why : $"match: cover={(m.CoverUrl != null)}") + "\n" + SongRecognizer.LastAnswer;
+                    }
+                    catch (Exception ex) { answer = "error: " + ex; }
+                    Directory.CreateDirectory(dir);
+                    File.WriteAllText(Path.Combine(dir, "result.txt"), answer);
+                    break;
+                }
                 case "music2":
                 {
                     // 15a swipe · 16b song line · 19 sleep timer · 21b ±15 · 17a mixer (demo song)

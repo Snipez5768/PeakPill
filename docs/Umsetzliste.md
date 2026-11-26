@@ -82,7 +82,7 @@ Vor dem Bauen gibt es zu jeder Funktion Mockups im Chat.
 - 34 Ungelesene Mails
 - 35 Freund geht online
 - 53 Profile (Arbeit, Gaming, Abend)
-- 22 Lied erkennen – ganz am Ende
+- [x] 22 Lied erkennen (26.11.): Ton aller Apps, inoffiziell über Shazam – Kontrollzentrum (Wellen-Knopf), Strg+Alt+L oder „Welcher Song ist das?“
 
 ## Schon vorhanden
 

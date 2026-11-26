@@ -134,6 +134,7 @@ public partial class IslandWindow : Window
         WireMusicMore();
         WireHelpers();
         WireSystem();
+        WireSong();
         WireGames2();
         WireFun();
         WireSelectionMenu();
@@ -2565,6 +2566,7 @@ public partial class IslandWindow : Window
         HintIcon.Opacity = 1;
         HintIcon.Visibility = Visibility.Visible;
         HintWave.Visibility = Visibility.Collapsed;
+        SongWave.Visibility = Visibility.Collapsed;
         HintLevel.Visibility = Visibility.Collapsed; // only ShowLevel (volume / brightness) turns the bar on
         HintRoll.Visibility = Visibility.Collapsed;  // … and its rolling number
         TypingFadeOff(); // a notice is fully there, even while you type
@@ -3091,6 +3093,7 @@ public partial class IslandWindow : Window
             case HotkeyAction.ColorPicker: ScreenshotController.Start(false, picker: true); break; // 30
             case HotkeyAction.InstantReplay: _ = InstantReplay(); break; // 39
             case HotkeyAction.VoiceCommand: VoiceCommand(); break; // 57
+            case HotkeyAction.SongRecognize: RecognizeSong(); break; // 22
             case HotkeyAction.Controls: ToggleTab("Controls"); break;
             case HotkeyAction.Screenshot: TakeScreenshot(false); break;
             case HotkeyAction.ScreenshotOcr: TakeScreenshot(true); break;

@@ -16,7 +16,7 @@ public enum AiProvider { Claude, ChatGpt, Gemini }
 public enum HotkeyAction
 {
     ToggleIsland, Clipboard, Screenshot, ScreenshotOcr, Shelf, Music, Widgets, Reminders, Controls,
-    MicMute, QueueMode, PlayPause, NextTrack, PrevTrack, FocusTimer, Settings, AiChat, QuickNote, AiSelection, AiRegion, Calculator, Search, ColorPicker, InstantReplay, VoiceCommand
+    MicMute, QueueMode, PlayPause, NextTrack, PrevTrack, FocusTimer, Settings, AiChat, QuickNote, AiSelection, AiRegion, Calculator, Search, ColorPicker, InstantReplay, VoiceCommand, SongRecognize
 }
 
 public sealed record HotkeyDef(HotkeyAction Action, string Label, string Default);
@@ -51,6 +51,7 @@ public static class HotkeyInfo
         new(HotkeyAction.ColorPicker,   L.T("Farbpipette"),                     "Ctrl+Alt+H"),
         new(HotkeyAction.InstantReplay, L.T("Instant Replay (OBS)"),            "Ctrl+Alt+J"),
         new(HotkeyAction.VoiceCommand,  L.T("Sprachbefehl (halten)"),           "Ctrl+Alt+G"),
+        new(HotkeyAction.SongRecognize, L.T("Welcher Song läuft?"),             "Ctrl+Alt+L"),
     };
 }
 
@@ -106,6 +107,8 @@ public sealed class AppSettings
     public int GameReminderMinutes { get; set; } = 120;
     public bool WishlistSales { get; set; } = true;
     public List<string> WishlistTold { get; set; } = new();
+    // 22 (2026-11-26): songs the island recognized (newest first, at most 30) – only on this PC
+    public List<SongSeen> SongHistory { get; set; } = new();
     public DateTime WishlistCheckedOn { get; set; }
     // fun (2026-11-18): rain and snow in the island, holidays and birthdays, water, achievements
     public bool WeatherFx { get; set; } = true;
@@ -258,4 +261,14 @@ public sealed class AppSettings
         if (ClipboardLimit < 10) ClipboardLimit = 200;
         if (HoverDelayMs < 0) HoverDelayMs = 150;
     }
+}
+
+/// <summary>A song the island recognized (22).</summary>
+public sealed class SongSeen
+{
+    public string Title { get; set; }
+    public string Artist { get; set; }
+    public string Url { get; set; }
+    public string Cover { get; set; }
+    public DateTime At { get; set; }
 }

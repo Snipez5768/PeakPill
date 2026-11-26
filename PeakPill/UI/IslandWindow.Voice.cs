@@ -115,8 +115,8 @@ public partial class IslandWindow
         timer.Append(units);
         list.Add(new Grammar(timer) { Name = "timer" });
         list.Add(new Grammar(new GrammarBuilder(new Choices(de
-            ? new[] { "nächster titel", "nächstes lied", "nächster song", "weiter", "vorheriger titel", "vorheriges lied", "zurück", "pause", "stopp", "abspielen", "musik an", "musik aus", "fokus starten", "einstellungen" }
-            : new[] { "next song", "next track", "skip", "previous song", "previous track", "back", "pause", "stop", "play", "music on", "music off", "start focus", "settings" }))) { Name = "media" });
+            ? new[] { "nächster titel", "nächstes lied", "nächster song", "weiter", "vorheriger titel", "vorheriges lied", "zurück", "pause", "stopp", "abspielen", "musik an", "musik aus", "fokus starten", "einstellungen", "welcher song ist das", "welches lied ist das", "welcher song läuft", "song erkennen", "lied erkennen", "shazam" }
+            : new[] { "next song", "next track", "skip", "previous song", "previous track", "back", "pause", "stop", "play", "music on", "music off", "start focus", "settings", "what song is this", "which song is this", "recognize song", "shazam" }))) { Name = "media" });
         var note = new GrammarBuilder(de ? "notiz" : "note");
         note.AppendDictation();
         list.Add(new Grammar(note) { Name = "note" });
@@ -162,6 +162,7 @@ public partial class IslandWindow
         else if (Regex.IsMatch(q, @"^(vorherige[rsn]? (titel|lied|song)|zurück|back|previous( song| track)?)$")) { direct = H.Media.Previous; label = L.T("Vorheriger Titel"); }
         else if (Regex.IsMatch(q, @"^(pause|stopp?|musik (aus|stopp?)|music off|abspielen|play|musik an|music on|weiter abspielen)$")) { direct = H.Media.PlayPause; label = L.T("Wiedergabe / Pause"); }
         else if (Regex.IsMatch(q, @"^(fokus starten|start focus)$")) { direct = () => { Expand(L.T("Timer"), true); SetFocusMode(true); }; label = L.T("Fokus"); }
+        else if (Regex.IsMatch(q, @"^(welche[rs]? (song|lied) (ist das|läuft( gerade)?)|(song|lied) erkennen|wh(at|ich) song is (this|playing)|recogni[sz]e( the)? song|shazam)$")) { direct = RecognizeSong; label = L.T("Song erkennen"); }
         if (direct != null)
         {
             ShowHint("check", label, (Brush)FindResource("Green"), check: true, key: "voice");

@@ -1024,5 +1024,22 @@ public static class LangEn
         ("Nichts verstanden.", "Didn’t catch anything."),
         ("Das hat nicht geklappt.", "That didn’t work."),
         ("{0} konnte die Aufnahme nicht lesen.", "{0} couldn’t read the recording."),
+        // 22 which song is this (2026-11-26)
+        ("Welcher Song läuft?", "What song is playing?"),
+        ("Song erkennen", "Recognize song"),
+        ("In Spotify ↗", "In Spotify ↗"),
+        ("Zuhören / abbrechen", "Listen / cancel"),
+        ("In Spotify suchen", "Search in Spotify"),
+        ("Ton aller Apps – kein Mikrofon", "Sound of all apps – no microphone"),
+        ("Zum Zuhören tippen", "Tap to listen"),
+        ("Sucht …", "Searching …"),
+        ("Kein Song erkannt", "No song recognized"),
+        ("Shazam nicht erreichbar", "Can’t reach Shazam"),
+        ("Erkennen ging nicht", "Couldn’t recognize"),
+        ("Gerade läuft nichts", "Nothing is playing"),
+        ("Song erkannt", "Song recognized"),
+        ("In Spotify", "In Spotify"),
+        ("Nochmal tippen", "Tap to try again"),
+        ("Abgebrochen", "Cancelled"),
     };
 }
