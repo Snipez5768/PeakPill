@@ -19,6 +19,7 @@ public partial class IslandWindow
     private DispatcherTimer _funTimer;
     private int _funTick;
     private int _wasWet = -1;
+    private bool _weatherPending;
     private DateTime _lastShower, _lastDrinkAsk = DateTime.Now, _drinkActiveSince = DateTime.Now;
 
     private void WireFun()
@@ -34,13 +35,15 @@ public partial class IslandWindow
     private void FunTick()
     {
         _funTick++;
-        // 48b: rain / snow now and the clock shows – now and then a few drops fall through
-        if (S.WeatherFx && IdleClock.IsVisible && _state == State.Collapsed && WeatherService.Precip(H.Weather.Code) is var p and > 0
+        // 48b: rain / snow now – now and then a few drops fall through the closed island, whatever it shows (before
+        // 2026-11-26 only with the clock: with music playing the user never saw a drop)
+        if (S.WeatherFx && _state == State.Collapsed && WeatherService.Precip(H.Weather.Code) is var p and > 0
             && DateTime.Now - _lastShower > TimeSpan.FromSeconds(45))
         {
             _lastShower = DateTime.Now;
-            Shower(p, 2600, 6);
+            Shower(p, 3400, 12);
         }
+        if (_weatherPending && _state == State.Collapsed) WeatherMoment();
         HolidayCheck();
         DrinkCheck();
         if (_funTick % 3 == 0) CheckAchievements();
@@ -58,14 +61,17 @@ public partial class IslandWindow
         int now = WeatherService.Precip(H.Weather.Code);
         var soon = H.Weather.HourCodes.Where(h => h.At <= DateTime.Now.AddHours(2)).Select(h => (h.At, P: WeatherService.Precip(h.Code))).FirstOrDefault(h => h.P > 0);
         int wet = now > 0 ? now : soon.P;
-        if (_wasWet == 0 && wet > 0 && _state == State.Collapsed)
+        // already raining when PeakPill starts counts too; the island busy (open, a card) → it waits for the next quiet moment
+        if (_wasWet != 1 && wet > 0 && _state != State.Collapsed) { _weatherPending = true; return; }
+        _weatherPending = false;
+        if (_wasWet != 1 && wet > 0)
         {
             bool snow = wet == 2;
             string text = now > 0 ? (snow ? L.T("Es schneit") : L.T("Es regnet"))
                         : snow ? L.T($"Schnee ab {soon.At:HH} Uhr") : L.T($"Regen ab {soon.At:HH} Uhr");
             _hintHoldMs = 3800;
             ShowHint(snow ? "snow" : "drop", text, snow ? Brushes.White : (Brush)FindResource("Teal"), key: "weather");
-            After(150, () => Shower(wet, 3600, 14));
+            After(150, () => Shower(wet, 3800, 24));
         }
         _wasWet = wet > 0 ? 1 : 0;
     }
@@ -80,13 +86,13 @@ public partial class IslandWindow
         var color = snow ? Brushes.White : new SolidColorBrush(Color.FromRgb(0x64, 0xD2, 0xFF));
         for (int i = 0; i < count; i++)
         {
-            Shape s = snow ? new Ellipse { Width = 3.5, Height = 3.5, Fill = color, Opacity = 0.85 }
-                           : new Rectangle { Width = 1.4, Height = 6, RadiusX = 0.7, RadiusY = 0.7, Fill = color, Opacity = 0.8 };
+            Shape s = snow ? new Ellipse { Width = 4.5, Height = 4.5, Fill = color, Opacity = 0.95 }
+                           : new Rectangle { Width = 2, Height = 10, RadiusX = 1, RadiusY = 1, Fill = color, Opacity = 0.95 };
             var t = new TranslateTransform(0, -8);
             s.RenderTransform = t;
             Canvas.SetLeft(s, 10 + _funRnd.NextDouble() * (w - 20));
             WeatherFx.Children.Add(s);
-            double fall = snow ? 1900 + _funRnd.Next(900) : 520 + _funRnd.Next(260);
+            double fall = snow ? 1900 + _funRnd.Next(900) : 750 + _funRnd.Next(350); // slow enough to see in a pill only ~37 px tall
             var begin = TimeSpan.FromMilliseconds(_funRnd.Next(Math.Max(1, ms - (int)fall)));
             var a = new DoubleAnimation(-8, h + 4, TimeSpan.FromMilliseconds(fall)) { BeginTime = begin, FillBehavior = FillBehavior.Stop };
             if (snow) t.BeginAnimation(TranslateTransform.XProperty, new DoubleAnimation(-4, 4, TimeSpan.FromMilliseconds(fall / 2)) { BeginTime = begin, AutoReverse = true });

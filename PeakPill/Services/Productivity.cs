@@ -112,6 +112,16 @@ public sealed class WeatherService : ObservableObject
     public List<(DateTime At, int Code)> HourCodes { get; private set; } = new();
     /// <summary>0 dry · 1 rain (drizzle, showers, thunder) · 2 snow.</summary>
     public static int Precip(int code) => code is >= 71 and <= 77 or 85 or 86 ? 2 : code is >= 51 and <= 67 or >= 80 and <= 82 or >= 95 ? 1 : 0;
+
+#if DEBUG
+    /// <summary>Test only: pretend the weather service just fetched this (raises the same change as a real refresh).</summary>
+    public void Fake(int code, List<(DateTime At, int Code)> hours)
+    {
+        Code = code;
+        HourCodes = hours;
+        Raise(nameof(HourCodes));
+    }
+#endif
     private static readonly HttpClient Http = new() { Timeout = TimeSpan.FromSeconds(12) };
     private readonly DispatcherTimer _t = new() { Interval = TimeSpan.FromMinutes(20) };
     private bool _has;
@@ -213,6 +223,7 @@ public sealed class WeatherService : ObservableObject
                 }
                 Hours = hours;
                 HourCodes = codes;
+                Raise(nameof(HourCodes)); // the island's rain moment (48a) listens for this – without it, it never came
                 Raise(nameof(HourCodes));
             }
             catch { }

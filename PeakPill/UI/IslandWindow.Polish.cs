@@ -854,6 +854,27 @@ public partial class IslandWindow
                     Save("output");
                     break;
                 }
+                case "rain":
+                {
+                    // 48 through the real triggers (2026-11-26): dry → rain while music plays, then the drops every 45 s (demo song)
+                    fh = 110;
+                    H.Agents.StopListening();
+                    _demoOnly = true;
+                    if (_tucked) Untuck();
+                    H.Media.Fake("Nachtlicht", "Lena Ost", Pic(Color.FromRgb(0xFF, 0x7A, 0x3D), Color.FromRgb(0xE0, 0x3A, 0x5A)), false);
+                    UpdatePill(true);
+                    H.Weather.Fake(3, new() { (DateTime.Now, 3), (DateTime.Now.AddHours(1), 3) });
+                    await Task.Delay(1200);
+                    H.Weather.Fake(61, new() { (DateTime.Now, 61), (DateTime.Now.AddHours(1), 61) });
+                    await Film(16, 80);
+                    Save("1_es_regnet");
+                    await Task.Delay(5000);
+                    _lastShower = DateTime.MinValue;
+                    FunTick();
+                    await Film(12, 80);
+                    Save("2_tropfen_mit_musik");
+                    break;
+                }
                 case "shazam":
                 {
                     // 22 which song is this: the hotkey in the closed island → the card; the view in the control center (demo songs only)
